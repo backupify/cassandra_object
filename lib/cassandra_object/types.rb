@@ -128,7 +128,7 @@ module CassandraObject
 
   module ArrayType
     def encode(array)
-      raise ArgumentError.new("#{self} requires an Array") unless hash.kind_of?(Array)
+      raise ArgumentError.new("#{self} requires an Array") unless array.kind_of?(Array)
       array.to_json
     end
     module_function :encode
