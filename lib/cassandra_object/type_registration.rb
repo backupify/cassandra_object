@@ -6,3 +6,4 @@ CassandraObject::Base.register_attribute_type(:time_with_zone, ActiveSupport::Ti
 CassandraObject::Base.register_attribute_type(:string, String, CassandraObject::StringType)
 CassandraObject::Base.register_attribute_type(:hash, Hash, CassandraObject::HashType)
 CassandraObject::Base.register_attribute_type(:boolean, TrueClass, CassandraObject::BooleanType)
+CassandraObject::Base.register_attribute_type(:array, Array, CassandraObject::ArrayType)

@@ -249,4 +249,27 @@ class TypesTest < CassandraObjectTestCase
       end
     end
   end
+
+  context "ArrayType" do
+    context "encode" do
+      should "handle an empty Array" do
+        assert_nothing_raised {
+          assert_equal([].to_json, CassandraObject::ArrayType.encode([]))
+        }
+      end
+
+      should "handle string values" do
+        assert_nothing_raised {
+          a = ['foo', 'bar']
+          assert_equal(a.to_json, CassandraObject::ArrayType.encode(a))
+        }
+      end
+
+      should "handle non-string keys" do
+        assert_nothing_raised {
+          a = [1,1,2,3,5,8,13]
+          assert_equal(a.to_json, CassandraObject::ArrayType.encode(a))
+        }
+      end
+    end
 end

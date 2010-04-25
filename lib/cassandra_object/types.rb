@@ -125,4 +125,17 @@ module CassandraObject
     end
     module_function :decode
   end
+
+  module ArrayType
+    def encode(array)
+      raise ArgumentError.new("#{self} requires an Array") unless hash.kind_of?(Array)
+      array.to_json
+    end
+    module_function :encode
+
+    def decode(str)
+      JSON::parse(str)
+    end
+    module_function :decode
+  end
 end
