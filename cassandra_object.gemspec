@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('activesupport', '>= 3.0.pre')
   s.add_dependency('activemodel',   '>= 3.0.pre')
-  s.add_dependency('cassandra',     '>= 0.7')
+  s.add_dependency('cassandra',     '>= 0.7.6')
 
   s.files = Dir['lib/**/*'] + Dir["vendor/**/*"]
   s.require_path = 'lib'
