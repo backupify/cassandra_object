@@ -19,11 +19,11 @@ module CassandraObject
       else
         start_with = nil
       end
-      
+      reversed = @options[:reversed] || false
       while objects.size < number_to_find && !out_of_keys
         index_results = connection.get(@column_family, @key, @super_column, :count=>limit,
                                                                             :start=>start_with,
-                                                                            :reversed=>@options[:reversed])
+                                                                            :reversed=>reversed)
 
         out_of_keys  = index_results.size < limit
 
