@@ -28,13 +28,13 @@ class IndexTest < CassandraObjectTestCase
     setup do
       @last_name = ActiveSupport::SecureRandom.hex(5)
       @koz = Customer.create :first_name=>"Michael", :last_name=>@last_name, :date_of_birth=>28.years.ago.to_date
-      connection.insert("CustomersByLastName", @last_name, {"last_name"=>{SimpleUUID::UUID.new=>"ROFLSKATES"}})
+      connection.insert("CustomersByLastName", @last_name, {SimpleUUID::UUID.new=>"ROFLSKATES"})
       @wife = Customer.create :first_name=>"Anika", :last_name=>@last_name, :date_of_birth=>30.years.ago.to_date
     end
     
     should "Return both values and clean up" do
       assert_ordered [@wife.key, @koz.key], Customer.find_all_by_last_name(@last_name).map(&:key)
-      assert_ordered [@wife.key, @koz.key], connection.get("CustomersByLastName", @last_name, "last_name", :reversed=>true).values
+      assert_ordered [@wife.key, @koz.key], connection.get("CustomersByLastName", @last_name, :reversed=>true).values
     end
     
   end
@@ -65,5 +65,17 @@ class IndexTest < CassandraObjectTestCase
       assert connection.get("InvoicesByNumber", "15", "number").blank?
     end
     
+  end
+
+  context "An index with a custom CF name " do
+    setup do
+      @last_name = ActiveSupport::SecureRandom.hex(5)
+      @koz = Customer.create :first_name=>"Michael", :last_name=>@last_name, :date_of_birth=>28.years.ago.to_date
+    end
+
+    should "use the right CF name" do
+      assert_equal 'FirstNames', Customer.indexes['first_name'].column_family
+      assert_equal "Michael", Customer.find_all_by_first_name("Michael").first.first_name
+    end
   end
 end

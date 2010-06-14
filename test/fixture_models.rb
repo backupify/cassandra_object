@@ -24,7 +24,8 @@ class Customer < CassandraObject::Base
   after_create :set_after_create_called
 
   key :uuid
-
+  
+  index :first_name, :column_family => "FirstNames"
   index :last_name, :reversed=>true
 
   association :invoices, :unique=>false, :inverse_of=>:customer, :reversed=>true
