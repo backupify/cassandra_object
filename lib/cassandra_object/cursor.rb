@@ -149,10 +149,11 @@ module CassandraObject
             remove(index_results.index(o.key))
           end
         end
-        
+
+        objects.uniq!
         start_with = objects.last_column_name = keys.last
         objects.first_column_name = keys.first unless objects.first_column_name
-        limit = (number_to_find - results.size) + 1
+        limit = (number_to_find - objects.size) + 1
         
       end
       
