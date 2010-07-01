@@ -45,7 +45,7 @@ module CassandraObject
     
         unless missing_keys.empty?
           @target_class.multi_get(missing_keys, :quorum=>true).each do |(key, result)|
-            index_key = index_results.index(key)
+            index_key = index_results.key(key)
             if result.nil?
               remove(index_key)
               results.delete(key)
@@ -132,7 +132,7 @@ module CassandraObject
     
         unless missing_keys.empty?
           @target_class.multi_get(missing_keys, :quorum=>true).each do |(key, result)|
-            index_key = index_results.index(key)
+            index_key = index_results.key(key)
             if result.nil?
               remove(index_key)
               results.delete(key)
