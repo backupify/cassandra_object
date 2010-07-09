@@ -76,7 +76,13 @@ module CassandraObject
 
       def write(key, attributes, schema_version)
         returning(key) do |key|
-          connection.insert(column_family, key.to_s, encode_columns_hash(attributes, schema_version), :consistency => write_consistency_for_thrift)
+          connection.batch(:consistency => write_consistency_for_thrift) do
+            removes, inserts = encode_columns_hash(attributes, schema_version).partition {|k, v| v.nil? }
+            connection.insert(column_family, key.to_s, inserts)
+            removes.each do |column, val|
+              connection.remove(column_family, key.to_s, column.to_s)
+            end
+          end
         end
       end
 
@@ -93,14 +99,14 @@ module CassandraObject
 
       def encode_columns_hash(attributes, schema_version)
         attributes.inject(Hash.new) do |memo, (column_name, value)|
-          memo[column_name.to_s] = model_attributes[column_name].converter.encode(value)
+          memo[column_name.to_s] = model_attributes[column_name].encode(value)
           memo
         end.merge({"schema_version" => schema_version.to_s})
       end
 
       def decode_columns_hash(attributes)
         attributes.inject(Hash.new) do |memo, (column_name, value)|
-          memo[column_name.to_s] = model_attributes[column_name].converter.decode(value)
+          memo[column_name.to_s] = model_attributes[column_name].decode(value)
           memo
         end
       end

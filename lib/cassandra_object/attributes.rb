@@ -15,6 +15,14 @@ module CassandraObject
       value
     end
 
+    def encode(value)
+      converter.encode(value) unless value.nil? && @options[:allow_nil]
+    end
+
+    def decode(value)
+      converter.decode(value) unless value.nil? && @options[:allow_nil]
+    end
+
     def define_methods!
       @owner_class.define_attribute_methods(true)
     end
