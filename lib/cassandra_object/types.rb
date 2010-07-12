@@ -87,12 +87,14 @@ module CassandraObject
   module StringType
     def encode(str)
       raise ArgumentError.new("#{self} requires a String") unless str.kind_of?(String)
-      str
+      # thrift forces encoding to ascii-8bit, so we have to first convert to utf8, then
+      # force encoding, so that on decode we can safely force to utf-8
+      str.encode("utf-8").force_encoding('ascii-8bit')
     end
     module_function :encode
 
     def decode(str)
-      str
+      str.clone.force_encoding('utf-8')
     end
     module_function :decode
   end
@@ -100,12 +102,13 @@ module CassandraObject
   module HashType
     def encode(hash)
       raise ArgumentError.new("#{self} requires a Hash") unless hash.kind_of?(Hash)
-      hash.to_json
+      # to_json on HWIA barfs: https://rails.lighthouseapp.com/projects/8994/tickets/4726-hashwithindifferentaccessto_json-will-raise-a-systemstackerror-stack-level-too-deep
+      hash.to_hash.to_json.encode("utf-8").force_encoding('ascii-8bit')
     end
     module_function :encode
 
     def decode(str)
-      JSON::parse(str)
+      ActiveSupport::HashWithIndifferentAccess.new(JSON::parse(str.force_encoding('utf-8')))
     end
     module_function :decode
   end
@@ -129,12 +132,12 @@ module CassandraObject
   module ArrayType
     def encode(array)
       raise ArgumentError.new("#{self} requires an Array") unless array.kind_of?(Array)
-      array.to_json
+      array.to_json.encode("utf-8").force_encoding('ascii-8bit')
     end
     module_function :encode
 
     def decode(str)
-      JSON::parse(str)
+      JSON::parse(str.force_encoding('utf-8'))
     end
     module_function :decode
   end
