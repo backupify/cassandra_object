@@ -25,7 +25,9 @@ module CassandraObject
     
     module ClassMethods
       def create!(attributes)
-        returning new(attributes), &:save!
+        new(attributes).tap do |o|
+          o.save!
+        end
       end
     end
     
