@@ -6,8 +6,8 @@ module CassandraObject
       class_inheritable_writer :read_consistency
     end
 
-    VALID_READ_CONSISTENCY_LEVELS = [:one, :quorum, :all]
-    VALID_WRITE_CONSISTENCY_LEVELS = VALID_READ_CONSISTENCY_LEVELS + [:zero]
+    VALID_READ_CONSISTENCY_LEVELS = [:one, :quorum, :local_quorum, :each_quorum, :all, :any]
+    VALID_WRITE_CONSISTENCY_LEVELS = VALID_READ_CONSISTENCY_LEVELS
 
     module ClassMethods
       def consistency_levels(levels)
@@ -136,10 +136,12 @@ module CassandraObject
 
       def consistency_for_thrift(consistency)
         {
-          :zero   => Cassandra::Consistency::ZERO,
-          :one    => Cassandra::Consistency::ONE, 
+          :one    => Cassandra::Consistency::ONE,
           :quorum => Cassandra::Consistency::QUORUM,
-          :all    => Cassandra::Consistency::ALL
+          :local_quorum => Cassandra::Consistency::LOCAL_QUORUM,
+          :each_quorum => Cassandra::Consistency::EACH_QUORUM,
+          :all    => Cassandra::Consistency::ALL,
+          :any    => Cassandra::Consistency::ANY
         }[consistency]
       end
     end
